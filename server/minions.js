@@ -1,40 +1,43 @@
 const express = require('express');
-const apiRouter = express.Router();
+const minionsRouter = express.Router({mergeParams: true});
+const bodyParser = require('body-parser');
 
-apiRouter.get('/api/minions', (req, res, next) => {
-  res.send(minions);
+const { getAllFromDatabase, getFromDatabaseById, addToDatabase,
+  updateInstanceInDatabase, deleteFromDatabaseById, deleteAllFromDatabase }
+  = require('./db');
+
+minionsRouter.get('', (req, res, next) => {
+  res.send(getAllFromDatabase('minions'));
 });
 
-apiRouter.post('apis/minions', (req, res, next) => {
-  const receivedMinion = createMinion('minions', req.query);
-  if (receivedMinion) {
-    minions.push(receivedMinion);
-    res.status(201).send(receivedMinion);
+minionsRouter.post('/', (req, res, next) => {
+  const newMinion = addToDatabase(req.body, 'minions');
+  if (newMinion) {
+    res.status(201).send(newMinion);
   } else {
-    res.status(400).send();
+    res.status(400).send('Couldnt create minion');
   }
 });
 
-apiRouter.get('/apis/minions/:minionId', (req, res, next) => {
-  const minions = getElementById(req.params.id, minions);
-  if (minions) {
-    res.send(minions);
+minionsRouter.get('/:minionId', (req, res, next) => {
+  const foundMinion = getFromDatabaseById(req.params.minionId, 'minions');
+  if (foundMinion) {
+    res.send(foundMinion);
   } else {
     res.status(404).send('Minions not found.');
   }
 });
 
-apiRouter.put('/apis/minions/:minionId', (req, res, next) => {
-  const minions = getElementById(req.params.id, minions);
-  if (minionIndex !== -1) {
-    updateElement(req.params.id, req.query, animals);
-    res.send(minions[minionIndex]);
+minionsRouter.put('/:minionId', (req, res, next) => {
+  const foundMinion = getFromDatabaseById(req.params.minionId, 'minions');
+  if (Number(req.params.minionId) && foundMinion) {
+    res.send(updateInstanceInDatabase(req.body, 'minions'));
   } else {
     res.status(404).send();
   }
 });
 
-apiRouter.delete('/apis/minions/:minionID', (req, res, next) => {
+minionsRouter.delete('/apis/minions/:minionID', (req, res, next) => {
   const minionIndex = getElementById(req.params.id, minions);
   if (minionIndex !== -1) {
     minions.splice(minionIndex, 1);
@@ -44,4 +47,4 @@ apiRouter.delete('/apis/minions/:minionID', (req, res, next) => {
   }
 });
 
-module.exports = apiRouter;
+module.exports = minionsRouter;
