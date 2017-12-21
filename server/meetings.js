@@ -12,16 +12,26 @@ meetingsRouter.get('/', (req, res, next) => {
   res.send(getAllFromDatabase('meetings'));
 });
 
+//meetingsRouter.post('/', (req, res, next) => {
+//  const newMeeting = createMeeting();
+//  if (newMeeting) {
+//    res.status(201).send(addToDatabase('meetings', newMeeting));
+//  } else {
+//    res.status(400).send();
+//  }
+// });
+
 meetingsRouter.post('/', (req, res, next) => {
-  const newMeeting = createMeeting();
-  if (newMeeting) {
-    res.status(201).send(addToDatabase('meetings', newMeeting));
-  } else {
-    res.status(400).send();
-  }
+  let newMeeting = addToDatabase('meetings', createMeeting());
+  res.status(201).send(newMeeting);
 });
 
 meetingsRouter.delete('/', (req, res, next) => {
+  deleteAllFromDatabase('meetings');
+  res.status(204).send();
+});
+
+/* meetingsRouter.delete('/', (req, res, next) => {
   if (true) {
     deleteAllFromDatabase('meetings');
     res.status(204).send();
@@ -29,5 +39,8 @@ meetingsRouter.delete('/', (req, res, next) => {
     res.status(404).send();
   }
 });
+*/
+
+
 
 module.exports = meetingsRouter;
