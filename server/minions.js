@@ -38,9 +38,9 @@ minionsRouter.put('/:minionId', (req, res, next) => {
 });
 
 minionsRouter.delete('/apis/minions/:minionID', (req, res, next) => {
-  const minionIndex = getElementById(req.params.id, minions);
-  if (minionIndex !== -1) {
-    minions.splice(minionIndex, 1);
+  const minionIndex = getElementById(req.params.id, 'minions');
+  if (Number(req.params.minionId) && foundMinion) {
+    deleteFromDatabaseById(req.params.minionId, 'minions');
     res.status(204).send();
   } else {
     res.status(404).send();
